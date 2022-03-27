@@ -9,9 +9,11 @@ user = sessionStorage.getItem("user");
 
 console.log(user);
 
+console.log("HELLOOO?");
+
 
 $( document ).ready(function() {
-    $("#login").click(function(){
+    $("#login_btn").click(function(){
         login();
     }); 
 
@@ -26,7 +28,7 @@ $( document ).ready(function() {
 
     $("#submit").click(function(){
         alert("Please wait as we analyse your image");
-    })
+    });
 
 });
 
@@ -39,7 +41,7 @@ function login(){
         username = $('#username').val();
         password_input = $('#password').val();
         login_qry = login_head + username + login_tail;
-        alert("Please wait...")
+        alert("Please wait...");
             $.getJSON(login_qry, function(data){
                 if (data["password"] == password_input){
                     alert("Logged in Successfully")
