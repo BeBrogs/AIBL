@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- jQuery -->
+    <script src = "{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
+  
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{{url_for('static',filename='css/main.css')}}">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    
+
+    <!--Javascript-->
+    <script type="text/javascript"  src="{{ url_for('static', filename='js/azure.js') }}"></script>
+
+
+
+    <title>{{ pagename }}</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark" >
+        <a class="navbar-brand" style="font-size:20px"href="{{ url_for('index') }}">AIBL</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+          <ul class="navbar-nav mr-auto nav-text">
+            <li class="nav-item pl-5">
+              <a class="nav-link n-item" href="{{ url_for('detection') }}" >Make A Detection<span class="sr-only" >(current)</span></a>
+            </li>
+            <li class="nav-item pl-5">
+              <a class="nav-link n-item" href="#">Braille Alphabet</a>
+            </li>
+            <li class="nav-item pl-5">
+              <a class="nav-link n-item" href="{{ url_for('tracker') }}" id="progress">My Progress</a>
+            </li>
+            <li class="nav-item pl-5">
+              <a class="nav-link n-item" href="{{ url_for('register') }}">Register</a>
+            </li>
+            <li class="nav-item pl-5">
+              <a class="nav-link n-item" href="{{ url_for('login') }}">Login</a>
+            </li>
+            <li class="nav-item pl-5 pr-4">
+              <a class="nav-link n-item" id="logout">Logout</a>
+            </li>
+
+          </ul>
+          <span class="navbar-text nav-text" style="font-weight: bold; color:aliceblue;">
+            A modern solution for learning Braille
+          </span>
+        </div>
+      </nav>
+{% block bodyblock %}
+
+
+
+{% endblock %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+
+</body>
+</html>

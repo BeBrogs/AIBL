@@ -1,0 +1,210 @@
+<script>
+    if (sessionStorage.getItem("user") == null || sessionStorage.getItem("user") == "null"){
+        alert("You must be logged in to access this page.");
+        window.location.replace("/login");
+    }
+</script>
+{% extends 'navbar.html' %}
+
+{% block bodyblock %}
+
+<div class=" container my-5" style="position: relative">
+<div class="container mt-5">
+    <br><h3 class='display-2' text-align="center">Detect Braille</h3>
+    <h4>Choose a photo featuring Braille from your camera roll, then click upload to see the translation</h4>
+</div>
+<br>
+
+<div class="container" margin="auto">
+    <div>
+    <br>
+    <form action="#" method="post" enctype="multipart/form-data">
+        <input type="file" id="upload" name="uploaded_file" required="true" hidden>
+        <label for="upload" class="btn btn-secondary">Choose Photo</label>
+        <input id="submit" type="submit" value="Upload & Predict" class="btn btn-secondary" hidden>
+        <label for="submit" class="btn btn-secondary">Upload</label>
+    </form>
+    </div>
+</div>
+</div>
+<br><br>
+{% if not file_uploaded %}
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+{% endif %}
+{% if file_uploaded %}
+
+<div class="container">
+    <div class="row">
+        <div class="text-center" id="predict">
+		<img src="{{ data['visualize'] }}" alt="">
+        </div>
+    </div>
+    <div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <table>
+        <tr>
+            <th>Letter</th>
+            <th>Count</th>
+            <th>Letter</th>
+            <th>Count</th>
+            <th>Letter</th>
+            <th>Count</th>
+        </tr>
+        <tr>
+            <td>A</td>
+            <td>{{data["letter_dict"]["A"] }}</td>
+            <td>J</td>
+            <td>{{data["letter_dict"]["J"]}}</td>
+            <td>S</td>
+            <td>{{data["letter_dict"]["S"]}}</td>
+
+        </tr>        
+        <tr>
+            <td>B</td>
+            <td>{{data["letter_dict"]["B"] }}</td>
+            <td>K</td>
+            <td>{{data["letter_dict"]["K"]}}</td>
+            <td>T</td>
+            <td>{{data["letter_dict"]["T"]}}</td>
+
+        </tr>        
+        <tr>
+            <td>C</td>
+            <td>{{data["letter_dict"]["C"]}}</td>
+            <td>L</td>
+            <td>{{data["letter_dict"]["L"]}}</td>
+            <td>U</td>
+            <td>{{data["letter_dict"]["U"]}}</td>
+
+        </tr>
+        <tr>
+            <td>D</td>
+            <td>{{data["letter_dict"]["D"]}}</td>
+            <td>M</td>
+            <td>{{data["letter_dict"]["M"]}}</td>
+            <td>V</td>
+            <td>{{data["letter_dict"]["V"]}}</td>
+
+        </tr>
+        <tr>
+            <td>E</td>
+            <td>{{data["letter_dict"]["E"]}}</td>
+            <td>N</td>
+            <td>{{data["letter_dict"]["N"]}}</td>
+            <td>W</td>
+            <td>{{data["letter_dict"]["W"]}}</td>
+
+        </tr>
+        <tr>
+            <td>F</td>
+            <td>{{data["letter_dict"]["F"]}}</td>
+            <td>O</td>
+            <td>{{data["letter_dict"]["O"]}}</td>
+            <td>X</td>
+            <td>{{data["letter_dict"]["X"]}}</td>
+
+        </tr>
+        <tr>
+            <td>G</td>
+            <td>{{data["letter_dict"]["G"]}}</td>
+            <td>P</td>
+            <td>{{data["letter_dict"]["P"]}}</td>
+            <td>Y</td>
+            <td>{{data["letter_dict"]["Y"]}}</td>
+
+        </tr>
+        <tr>
+            <td>H</td>
+            <td>{{data["letter_dict"]["H"]}}</td>
+            <td>Q</td>
+            <td>{{data["letter_dict"]["Q"]}}</td>
+            <td>Z</td>
+            <td>{{data["letter_dict"]["Z"]}}</td>
+
+        </tr>
+        <tr>
+            <td>I</td>
+            <td>{{data["letter_dict"]["I"]}}</td>
+            <td>R</td>
+            <td>{{data["letter_dict"]["R"]}}</td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+</div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<script type="text/javascript">
+    update_count_head = "https://prod-102.westeurope.logic.azure.com/workflows/aab741a4ec254f3fa64f468593649417/triggers/request/paths/invoke/rest/aibl/" + sessionStorage.getItem("user");
+    update_count_mid = "/letters/";
+    update_count_tail = "?api-version=2016-10-01&sp=%2Ftriggers%2Frequest%2Frun&sv=1.0&sig=KTN2LWtoIvACVt9P6jJliueE9XOXf671p4JseJStT90";
+
+    function getData(vars){
+        return vars
+    }
+
+    //Shows error but works
+    letter_count = getData({{ data["letter_count"]|tojson }});
+
+    counts = {}
+    letter_count.forEach((el) => {
+        counts[el] = counts[el] ? (counts[el] += 1) : 1;
+    });
+
+    Object.entries(counts).forEach(([k,v]) => {
+        letter = k;
+        count = v;
+
+        data = {
+            username: sessionStorage.getItem("user"),
+            letter: letter,
+            count: count
+        }
+
+        data_json = JSON.stringify(data);
+        uri = update_count_head + update_count_mid + letter + update_count_tail;
+
+        fetch(uri,{
+            method: "PUT",
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body: data_json
+        });
+    })  
+
+
+</script>
+{% endif %}
+{% endblock %}

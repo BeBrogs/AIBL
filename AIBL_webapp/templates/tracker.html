@@ -1,0 +1,152 @@
+<script>
+    if (sessionStorage.getItem("user") == null || sessionStorage.getItem("user") == "null"){
+        alert("You must be logged in to access this page.");
+        window.location.replace("/login");
+    }
+</script>
+
+{% extends 'navbar.html' %}
+
+{% block bodyblock %}
+
+<div class="container">
+    <div class="row">
+    </div>
+    <div>
+    </div>
+    <br>
+    <br>
+    <h3 class='display-2' text-align="center">Your Entire History of Braille Cells Detected</h3>
+    <h4>Every Braille cell you detect will be tracked so that you know the areas that need more focus</h4>
+    <br>
+    <table id="tracker_table">
+        <tr>
+            <th>Letter</th>
+            <th>Count</th>
+            <th>Letter</th>
+            <th>Count</th>
+            <th>Letter</th>
+            <th>Count</th>
+        </tr>
+    </table>
+</div>
+<br>
+<br>
+<br>
+<div class="container">
+    <div class="row">
+    <h3 class='display-2' text-align="center">The letters you should focus on</h3>    
+    <h4>You have detected these Braille cells the least amount of times</h4>
+</div>
+<br>
+<br>
+<table id="recommended">
+    <tr>
+        <th>Letter</th>
+        <th>Count</th>
+    </tr>
+</table>
+</div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<script>
+
+    tracker_details_head = "https://prod-208.westeurope.logic.azure.com/workflows/d3a901d40d1d44c5b2859ee680158865/triggers/request/paths/invoke/rest/aibl/get_tracker_details/"
+    tracker_details_tail = "?api-version=2016-10-01&sp=%2Ftriggers%2Frequest%2Frun&sv=1.0&sig=pQmeMB3a-G4UNRf-JNNgCnJds0Zm0qfYM7LvKDOHYeQ";
+
+    tracker_details_uri = tracker_details_head + sessionStorage.getItem("user") + tracker_details_tail;
+
+
+    recommended_cells_head = "https://prod-171.westeurope.logic.azure.com/workflows/b60ef8ea06414379a5e486b72f729c4c/triggers/request/paths/invoke/rest/aibl/tracker/recommended_cells/";
+    recommended_cells_tail = "?api-version=2016-10-01&sp=%2Ftriggers%2Frequest%2Frun&sv=1.0&sig=k_JvzDSVcVZ8C-N0GSI732dqKD1oqbWZO5CSXPCdOZI";
+    recommended_cells_uri = recommended_cells_head + sessionStorage.getItem("user") + recommended_cells_tail;
+
+    function fill_tracking_table(){
+        $.getJSON(tracker_details_uri, function(data){
+            letter_data = data["Table1"];
+            }).then( (response) => {
+                letter_data_arr = []
+                for (var i = 0; i < letter_data.length; i += 3){
+                    if (i<23){
+                        letter_data_arr.push(letter_data.slice(i, i+3));
+                    }else{
+                        letter_data_arr.push(letter_data.slice(i, i+2));
+                    }
+                }
+                array = []
+
+                for (var i =0; i<=8; i++){
+                    if ( i <= 7){
+                        sub_arr = [letter_data_arr[i][0]["braille_letter"], letter_data_arr[i][0]["count"], letter_data_arr[i][1]["braille_letter"], letter_data_arr[i][1]["count"], letter_data_arr[i][2]["braille_letter"], letter_data_arr[i][2]["count"]];
+                        array.push(sub_arr);
+                    }else{
+                        sub_arr = [letter_data_arr[i][0]["braille_letter"], letter_data_arr[i][0]["count"], letter_data_arr[i][1]["braille_letter"], letter_data_arr[i][1]["count"]];
+                        array.push(sub_arr);
+                    }
+                }
+
+                table = document.getElementById("tracker_table");
+                for (var i =0; i < array.length; i++){
+
+                    //Create a new row
+                    var newRow = table.insertRow(table.length);
+
+                    for (var j=0;j < array[i].length; j++){
+
+                        var cell = newRow.insertCell(j);
+
+                        cell.innerHTML = array[i][j];
+                    }
+
+                }
+
+            });
+    }
+
+
+    function fill_recommended_table(){
+        $.getJSON(recommended_cells_uri, function(data){
+            letter_data = data["Table1"];
+
+        }).then( (response)=>{
+
+            recommended_letters_arr = [];
+
+            for (var i=0; i< 5; i++){
+                letter = letter_data[i]["braille_letter"];
+                count = letter_data[i]["count"];
+                recommended_letters_arr.push([letter, count]);
+            }
+
+            table = document.getElementById("recommended");
+
+            for (var i =0; i < recommended_letters_arr.length; i++){
+
+                //Create a new row
+                var newRow = table.insertRow(table.length);
+
+                for (var j=0;j < recommended_letters_arr[i].length; j++){
+
+                    var cell = newRow.insertCell(j);
+
+                    cell.innerHTML = recommended_letters_arr[i][j];
+                }
+
+}
+
+
+        });
+    }
+
+
+
+
+    fill_tracking_table();
+    fill_recommended_table();
+
+</script>
+{% endblock %}
